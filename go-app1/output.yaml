@@ -1,0 +1,300 @@
+---
+# Source: helm/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: go-app1-helm
+  labels:
+    helm.sh/chart: helm-0.1.0
+    app.kubernetes.io/name: helm
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: true
+---
+# Source: helm/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app1-helm
+  labels:
+    helm.sh/chart: helm-0.1.0
+    app.kubernetes.io/name: helm
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: helm
+    app.kubernetes.io/instance: go-app1
+---
+# Source: helm/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app1-helm
+  labels:
+    helm.sh/chart: helm-0.1.0
+    app.kubernetes.io/name: helm
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: helm
+      app.kubernetes.io/instance: go-app1
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: helm-0.1.0
+        app.kubernetes.io/name: helm
+        app.kubernetes.io/instance: go-app1
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      serviceAccountName: go-app1-helm
+      containers:
+        - name: helm
+          image: "nginx:1.16.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+---
+# Source: helm/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "go-app1-helm-test-connection"
+  labels:
+    helm.sh/chart: helm-0.1.0
+    app.kubernetes.io/name: helm
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['go-app1-helm:80']
+  restartPolicy: Never
+---
+# Source: helm-goapp1/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ajit-helm-goapp1
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: ajit
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: true
+---
+# Source: helm-goapp1/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ajit-helm-goapp1
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: ajit
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: ajit
+---
+# Source: helm-goapp1/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ajit-helm-goapp1
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: ajit
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: helm-goapp1
+      app.kubernetes.io/instance: ajit
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: helm-goapp1-0.1.0
+        app.kubernetes.io/name: helm-goapp1
+        app.kubernetes.io/instance: ajit
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      serviceAccountName: ajit-helm-goapp1
+      containers:
+        - name: helm-goapp1
+          image: "nginx:1.16.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+---
+# Source: helm-goapp1/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "ajit-helm-goapp1-test-connection"
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: ajit
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['ajit-helm-goapp1:80']
+  restartPolicy: Never
+---
+# Source: helm-goapp1/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: go-app1-helm-goapp1
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: true
+---
+# Source: helm-goapp1/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app1-helm-goapp1
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: go-app1
+---
+# Source: helm-goapp1/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app1-helm-goapp1
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: helm-goapp1
+      app.kubernetes.io/instance: go-app1
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: helm-goapp1-0.1.0
+        app.kubernetes.io/name: helm-goapp1
+        app.kubernetes.io/instance: go-app1
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      serviceAccountName: go-app1-helm-goapp1
+      containers:
+        - name: helm-goapp1
+          image: "nginx:1.16.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+---
+# Source: helm-goapp1/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "go-app1-helm-goapp1-test-connection"
+  labels:
+    helm.sh/chart: helm-goapp1-0.1.0
+    app.kubernetes.io/name: helm-goapp1
+    app.kubernetes.io/instance: go-app1
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['go-app1-helm-goapp1:80']
+  restartPolicy: Never
